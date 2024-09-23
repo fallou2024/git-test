@@ -2,42 +2,29 @@ shopping_list=[""]
 print(shopping_list)
 
 while True:
-  print("\n la liste des elements dans le menu:")
+  print("\n la liste des éléments dans le menu: ")
   print("1. ajouter")
   print("2. supprimer")
   print("3. afficher")
   print("4. quitter")
+  select = input(" veuillez selectionner dans le menu (1-4)")
+  if select=="1":
+    article = input(" veuillez ajouter un article à la liste")
+    shopping_list.append(article)
+    print(f"vous avez ajoutez {article}")
+  elif select =="2":
+    article = input(" veuillez supprimer un article de la liste")
+    shopping_list.remove(article)
+    print(f"vous avez supprimer {article}")
+  elif select == "3":
+    print("la liste actuelle des articles")
+    for number, article in enumerate(shopping_list, start=1):
+      print(f"{number}. {article}")
+  elif select == "4":
+    print("vous avez quitter le programme")
+    break
+  else:
+    print("vous n'avez pas selectionner dans le menu")
 
-select=input("veuillez selcetionner dans le menu(1-4)")
-if select=="1"
 
-if len(shopping_list)<=8:
-  article=input("entrer l'article a ajouter")
-  shopping_list.append(article)
-  print(f"{article} a ete ajouter a la liste.")
-else:
-  print("vous ne pouvez ajouter plus d'article a la liste. ") 
-
-elif choix=="2":
-  article=input("entrer l'article a supprime")
-  if article in shopping_list:
-  shopping_list.remove(article)
-  print(f"{article} a ete supprime a la liste.")
- else:
-  print(f"{article} n'est pas dans liste.")
-
-elif choix=="3":
-  print("la list actuelle des articles")
-  for number, article in enumerate(shopping_list, start=1):
-    print(f"{number}.{article}")
-
-elif choix=="4":
-  print("bye")
-  break
-
-else:
-  print("invalide, choisir une option entre 1 et 4.")
-
-  
-  
 
