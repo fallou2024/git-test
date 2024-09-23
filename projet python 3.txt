@@ -1,0 +1,42 @@
+def ajouter(x,y):
+  return x+y
+def soustraire(x,y):
+  return x-y
+def mutiplier(x,y):
+  return x*y
+def division(x,y):
+  return x/y
+
+operation={"+":ajouter,"-":soustraire,"*":multiplier,"/":division}
+
+def calculatrice(nombre):
+ num1=int(input("saisir le premier nombre"))
+ should_continu=True
+
+ while should_continu:
+  print("operation disponible:")
+  for symbol in operation keys():
+    print(symbol)
+
+operation_symbole=input("choississez une operation")
+
+if operation_symbol not in operations:
+            print("Opération invalide. Veuillez réessayer.")
+            continue
+
+num2=int(input("saisir le deuxieme nombre"))
+
+caculation_function=operations[operation_symbol]
+ answer = calculation_function(num1,num2)
+ print(f"{num1} {operation_symbol} {num2} = {answer}")
+
+continuer=input("("Souhaitez-vous utiliser le résultat comme premier nombre pour d'autres calculs ? (oui/non) : ").strip().lower()")      
+   if continuer == 'oui':
+            num1 = answer
+        else:
+            should_continue = False
+            calculatrice()
+
+calculatrice()         
+
+
