@@ -1,0 +1,25 @@
+   parts = user_input.split()
+            if len(parts) == 3:
+                a = float(parts[0])
+                symbole = parts[1]
+                b = float(parts[2])
+                result = calculatrice.calculate(a, symbole, b)
+                print(f"Résultat: {result}")
+            elif len(parts) == 2 and parts[1] == 'sqrt':
+                a = float(parts[0])
+                result = racine_carre(a)
+                print(f"Résultat: {result}")
+            elif len(parts) == 2 and parts[1].startswith('log'):
+                a = float(parts[0])
+                base = 10  # Base par défaut
+                if len(parts[1]) > 3:
+                    base = float(parts[1][3:])
+                result = logarithme(a, base)
+                print(f"Résultat: {result}")
+            else:
+                print("Format d'entrée non valide.")
+        except Exception as e:
+            print(f"Erreur: {e}")
+
+if __name__ == "__main__":
+    main()
