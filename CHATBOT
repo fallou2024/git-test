@@ -1,0 +1,62 @@
+import streamlit as st
+import openai
+
+# Configuration de l'API OpenAI
+openai.api_key = ""
+
+# Données produits (entrées manuelles)
+produits = [
+    {"nom": "Télévision Samsung 55\"", "categorie": "TV", "prix": 700.00, "stock": 10},
+    {"nom": "Réfrigérateur LG", "categorie": "Electroménager", "prix": 500.00, "stock": 5},
+    {"nom": "Micro-ondes Panasonic", "categorie": "Electroménager", "prix": 120.00, "stock": 15},
+    {"nom": "Ordinateur Dell", "categorie": "Informatique", "prix": 800.00, "stock": 7}]
+
+# Fonction pour obtenir les produits par catégorie
+def get_products(categorie=None):
+    if categorie:
+        return [p for p in produits if p["categorie"] == categorie]
+    return produits
+
+# Fonction pour interroger l'API OpenAI
+def get_recommendation(question):
+    response = openai.ChatCompletionCompletion.create(
+        model="gpt-4",
+        prompt=question,
+        max_tokens=100
+    )
+    return response.choices[0].text.strip()
+
+# Interface utilisateur
+st.title("Chatbot Boutique - Catalogue de Produits")
+
+# Choix de la catégorie
+categorie = st.selectbox("Choisissez une catégorie", ["Tous", "TV", "Electroménager", "Informatique"])
+
+# Recherche de produits
+if st.button("Rechercher"):
+    filtered_products = get_products(categorie if categorie != "Tous" else None)
+    if filtered_products:
+        for produit in filtered_products:
+            st.write(f"**Nom** : {produit['nom']}, **Prix** : {produit['prix']} €, **Stock** : {produit['stock']}")
+    else:
+        st.write("Aucun produit trouvé.")
+
+# Formulaire de commande
+with st.form("commande_form"):
+    st.header("Passer une commande")
+    produit = st.text_input("Nom du produit")
+    quantite = st.number_input("Quantité", min_value=1)
+    submit = st.form_submit_button("Passer commande")
+
+if submit:
+    st.write(f"Commande passée : {produit} - {quantite} unités")
+
+# Section Chatbot avec OpenAI
+st.header("Chatbot - Posez une question")
+question = st.text_input("Posez votre question au chatbot")
+if st.button("Envoyer la question"):
+    if question:
+        answer = get_recommendation(question)
+        st.write(f"Réponse du chatbot : {answer}")
+    else:
+        st.write("Veuillez poser une question.")
