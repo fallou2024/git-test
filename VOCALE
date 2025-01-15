@@ -1,0 +1,79 @@
+import speech_recognition as sr
+import streamlit as st
+import os
+from datetime import datetime
+
+def transcrire_audio(reconnaisseur, microphone, option_api, langue):
+    """Transcrire l'audio du microphone en utilisant l'API et la langue sélectionnées."""
+    try:
+        with microphone as source:
+            st.info("Ajustement pour le bruit ambiant. Veuillez patienter...")
+            reconnaisseur.adjust_for_ambient_noise(source)
+            st.info("Écoute en cours...")
+            audio = reconnaisseur.listen(source)
+
+        st.info("Traitement de l'audio...")
+        if option_api == "Reconnaissance vocale Google":
+            return reconnaisseur.recognize_google(audio, language=langue)
+        else:
+            return "API sélectionnée non encore implémentée."
+
+    except sr.UnknownValueError:
+        return "Désolé, impossible de comprendre l'audio. Veuillez réessayer."
+    except sr.RequestError as e:
+        return f"Impossible de demander des résultats à l'API : {e}"
+    except Exception as e:
+        return f"Une erreur inattendue est survenue : {e}"
+
+# Mise en page de l'application Streamlit
+st.title("Application de Reconnaissance Vocale")
+
+# Options pour les API
+options_api = ["Reconnaissance vocale Google"]
+api_selectionnee = st.selectbox("Sélectionnez l'API de reconnaissance vocale", options_api)
+
+# Sélection de la langue
+langue = st.text_input("Entrez le code de la langue (par exemple, 'fr-FR' pour le français, 'en-US' pour l'anglais) :", value="fr-FR")
+
+# Initialisation du reconnaisseur et du microphone
+reconnaisseur = sr.Recognizer()
+microphone = sr.Microphone()
+
+# Boutons pour contrôler le processus
+bouton_demarrer = st.button("Démarrer la reconnaissance")
+bouton_arreter = st.button("Arrêter la reconnaissance")
+
+# Espace réservé pour le texte transcrit
+texte_transcrit = st.empty()
+
+# Fonctionnalité de pause et reprise
+if 'en_pause' not in st.session_state:
+    st.session_state['en_pause'] = False
+
+bouton_pause = st.button("Pause" if not st.session_state['en_pause'] else "Reprendre")
+
+if bouton_pause:
+    st.session_state['en_pause'] = not st.session_state['en_pause']
+
+if bouton_demarrer and not st.session_state['en_pause']:
+    texte = transcrire_audio(reconnaisseur, microphone, api_selectionnee, langue)
+    texte_transcrit.text_area("Texte Transcrit :", texte, height=200)
+
+# Option pour enregistrer le texte transcrit
+if texte_transcrit:
+    if st.button("Enregistrer la Transcription"):
+        if texte_transcrit:
+            nom_fichier = f"transcription_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+            with open(nom_fichier, "wb") as fichier:
+                fichier.write(texte_transcrit)
+            st.success(f"Transcription enregistrée sous le nom {nom_fichier}")
+        else:
+            st.warning("Aucune transcription disponible à enregistrer.")
+
+# Instructions pour l'utilisateur
+st.markdown("### Instructions")
+st.markdown("1. Sélectionnez l'API pour la reconnaissance vocale.")
+st.markdown("2. Spécifiez la langue dans laquelle vous allez parler.")
+st.markdown("3. Cliquez sur 'Démarrer la reconnaissance' et parlez clairement dans le microphone.")
+st.markdown("4. Mettez en pause ou reprenez le processus si nécessaire.")
+st.markdown("5. Enregistrez le texte transcrit dans un fichier si besoin.")
